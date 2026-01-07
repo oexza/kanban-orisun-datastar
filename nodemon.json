@@ -1,0 +1,7 @@
+{
+  "watch": ["src"],
+  "ext": "ts,js,tsx",
+  "exec": "BUN_ENV=development bun run src/index.ts",
+  "signal": "SIGINT",
+  "delay": "500"
+}
