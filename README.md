@@ -36,7 +36,7 @@ All state changes are stored as immutable events, enabling complete replay and a
 ### Prerequisites
 
 You need access to:
-- **Orisun event store** instance
+- **Orisun event store** instance `https://github.com/oexza/Orisun?tab=readme-ov-file#quick-start`
 - **PostgreSQL database** (default: localhost:5434)
 - **NATS server** (default: localhost:4224)
 
