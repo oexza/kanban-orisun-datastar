@@ -5,7 +5,7 @@ import {
     CardUpdatedEvent,
     CardDeletedEvent,
     CommentAddedToCardEvent,
-    
+
 } from "~/events/events";
 import {
     EventRetriever,
@@ -67,7 +67,6 @@ export const addCommentCommandHandler = async (
     }
 
     const events = await eventsRetriever.getEvents(
-
         0,
         1,
         'forward',
@@ -101,10 +100,9 @@ export const addCommentCommandHandler = async (
     ]
 
     await eventSaver.saveEvents(
-
         eventsToSave,
         model.latestEventPosition,
-        [...(events.map(value => value.event.data.scope ?? []))],
+        events,
         query,
     );
 

@@ -54,7 +54,7 @@ export const lastEventPosition: Position = {
 
 // Individual Event Store Method Interfaces
 export interface EventSaver {
-    saveEvents(events: DomainEvent[], expectedPosition: -1 | Position, scopes: Array<Record<string, any>>, streamSubQuery?: Query,): Promise<WriteResult>;
+    saveEvents(events: DomainEvent[], expectedPosition: -1 | Position, scopeEvents: ResolvedDomainEvent[], streamSubQuery?: Query,): Promise<WriteResult>;
 }
 
 export interface EventRetriever {

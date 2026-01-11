@@ -20,8 +20,16 @@ class OrisunEventSaver implements EventSaver {
         this.tenantId = tenantId;
     }
 
-    async saveEvents(events: DomainEvent[], expectedPosition: -1 | Position, scopes: Array<Record<string, any>>,
+    async saveEvents(events: DomainEvent[], expectedPosition: -1 | Position, scopeEvents: ResolvedDomainEvent[],
                      streamSubQuery?: Query, organizationId?: string): Promise<WriteResult> {
+        // Sort scopeEvents by position to ensure deterministic scope merging
+        const sortedScopeEvents = [...scopeEvents].sort((a, b) => {
+            if (a.position.commitPosition !== b.position.commitPosition) {
+                return a.position.commitPosition - b.position.commitPosition;
+            }
+            return a.position.preparePosition - b.position.preparePosition;
+        });
+
         return await this.orisunClient.saveEvents(
             {
                 boundary: this.tenantId,
@@ -32,27 +40,40 @@ class OrisunEventSaver implements EventSaver {
                     } : expectedPosition,
                     subsetQuery: streamSubQuery,
                 },
-                events: events.map(event => {
-                    if (scopes.length > 0) {
-                        const seenKeys = new Set(Object.keys(event.data.scope || {}));
+                events: events
+                    .map(event => {
+                        if (sortedScopeEvents.length > 0) {
+                            const seenKeys = new Set(Object.keys(event.data.scope || {}));
 
-                        for (const scope of scopes) {
-                            for (const key of Object.keys(scope)) {
-                                if (seenKeys.has(key) && scope[key] !== event.data.scope?.[key]) {
-                                    throw new Error(`Scope conflict: field "${key}" is defined in multiple scopes`);
+                            for (const resolvedScopeEvent of sortedScopeEvents) {
+                                const scopeEvent = resolvedScopeEvent.event;
+                                const scope = scopeEvent.data.scope || {};
+                                for (const key of Object.keys(scope)) {
+                                    const existingValue = event.data.scope?.[key];
+                                    const newValue = scope[key];
+
+                                    if (seenKeys.has(key) && newValue !== existingValue) {
+                                        throw new Error(
+                                            `Scope conflict: field "${key}" is defined with conflicting values.\n` +
+                                            `  Target Event: ${event.eventType} (ID: ${event.eventId})\n` +
+                                            `  Scope Event: ${scopeEvent.eventType} (ID: ${scopeEvent.eventId}, Position: ${resolvedScopeEvent.position.commitPosition}/${resolvedScopeEvent.position.preparePosition})\n` +
+                                            `  Field: "${key}"\n` +
+                                            `  Existing value: ${JSON.stringify(existingValue)}\n` +
+                                            `  Conflicting value: ${JSON.stringify(newValue)}`
+                                        );
+                                    }
+                                    seenKeys.add(key);
                                 }
-                                seenKeys.add(key);
+                                event.data.scope = {...event.data.scope, ...scope};
                             }
-                            event.data.scope = {...event.data.scope, ...scope};
                         }
-                    }
-                    return {
-                        eventId: event.eventId,
-                        eventType: event.eventType,
-                        data: flatten(event.data),
-                        metadata: {...event.metadata, organization_id: organizationId},
-                    }
-                }),
+                        return {
+                            eventId: event.eventId,
+                            eventType: event.eventType,
+                            data: flatten(event.data),
+                            metadata: {...event.metadata, organization_id: organizationId},
+                        }
+                    }),
             }
         );
     }

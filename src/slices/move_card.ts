@@ -20,7 +20,7 @@ import {createModuleLogger} from "~/utils/logger";
 
 const logger = createModuleLogger('move-card-slice');
 
-const updateCardPositionRoute = (
+const moveCardRoute = (
     honoApp: HonoType,
     eventSaver: EventSaver,
     eventsRetriever: EventRetriever
@@ -33,7 +33,7 @@ const updateCardPositionRoute = (
         const listId = body.listId.trim();
         const cardIds = body.cardIds as string[];
 
-        await updateCardPositionCommandHandler(
+        await moveCardCommandHandler(
             new UpdateCardPositionCommand(movedCardId, boardId, listId, cardIds),
             eventSaver,
             eventsRetriever
@@ -53,7 +53,7 @@ export class UpdateCardPositionCommand {
     }
 }
 
-export const updateCardPositionCommandHandler = async (
+export const moveCardCommandHandler = async (
     command: UpdateCardPositionCommand,
     eventSaver: EventSaver,
     eventsRetriever: EventRetriever,
@@ -98,34 +98,33 @@ export const updateCardPositionCommandHandler = async (
         throw new Error(`Board with id ${command.boardId} does not exist.`);
     }
 
+    const eventId = randomUUIDv7()
     // Create CardMovedEvent for each card
     const eventsToSave = command.cardIds.map((cardId, index) => ({
-        eventId: randomUUIDv7(),
-        eventType: CardMovedEvent.name,
-        data: new CardMovedEvent(
-            randomUUIDv7(),
-            index,
-            {
-                boardListCreatedId: command.listId,
-                cardCreatedId: cardId,
-                cardMovedByCardCreatedId: model.movedCardCreatedId!,
-            }
-        ),
-        metadata: {query},
-    }));
+            eventId,
+            eventType: CardMovedEvent.name,
+            data: new CardMovedEvent(
+                eventId,
+                index,
+                {
+                    boardListCreatedId: command.listId,
+                    cardCreatedId: cardId,
+                }
+            ),
+            metadata: {query},
+        }),
+    );
 
     await eventSaver.saveEvents(
         eventsToSave,
         model.latestEventPosition,
-        [
-            ...(events.map(value => {
-
-                        delete value.event.data.scope?.boardListCreatedId
-                        return value.event.data.scope ?? {};
-                    }
-                )
-            )
-        ],
+        events.map(value => {
+            if (value.event.eventType === CardCreatedEvent.name) {
+                value.event.data.scope!.cardOriginalBoardListCreatedId = value.event.data.scope?.boardListCreatedId
+                delete value.event.data.scope?.boardListCreatedId
+            }
+            return value
+        }),
         query,
     );
 
@@ -160,4 +159,4 @@ class ContextModel {
     }
 }
 
-export {updateCardPositionRoute};
+export {moveCardRoute};

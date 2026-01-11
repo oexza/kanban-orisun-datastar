@@ -97,10 +97,9 @@ export const deleteCardCommandHandler = async (
     ]
 
     await eventSaver.saveEvents(
-
         eventsToSave,
         model.latestEventPosition,
-        [...(events.map(value => value.event.data.scope ?? []))],
+        events,
         query,
     );
 

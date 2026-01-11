@@ -85,10 +85,9 @@ export const createBoardListCommandHandler = async (command: CreateBoardListComm
     ]
 
     await eventSaver.saveEvents(
-
         eventsToSave,
         events[events.length - 1]?.position,
-        [...(events.map(value => value.event.data.scope ?? []))],
+        events,
         query,
     );
 }

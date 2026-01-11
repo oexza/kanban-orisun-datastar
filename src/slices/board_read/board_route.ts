@@ -49,7 +49,8 @@ export const boardRoute = (honoApp: HonoType, eventSaver: EventSaver, eventsRetr
                     boardSubscription = await subscriber.subscribe(
                         getBoardChannelName(boardId),
                         async (data: any) => {
-                            logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
+                            if (logger.isDebugEnabled())
+                                logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
                             const updatedHtml = await getBoardHTML(boardId);
 
                             await stream.writeSSE(ssePatch("#board-app", updatedHtml));
@@ -60,7 +61,8 @@ export const boardRoute = (honoApp: HonoType, eventSaver: EventSaver, eventsRetr
                     boardCardSubscription = await subscriber.subscribe(
                         getBoardCardChannelName(boardId),
                         async (data: any) => {
-                            logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
+                            if (logger.isDebugEnabled())
+                                logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
                             const updatedHtml = await getBoardHTML(boardId);
 
                             await stream.writeSSE(ssePatch("#board-app", updatedHtml));

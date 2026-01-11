@@ -55,12 +55,12 @@ export const createBoardsSSERoute = (honoApp: HonoType, db: NodePgDatabase, subs
                     subscription = await subscriber.subscribe(
                         getBoardsChannelName(),
                         async (data: any) => {
-                            logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
+                            if (logger.isDebugEnabled())
+                                logger.debug(`SSE route received event data: ${JSON.stringify(data)}`);
                             const updatedBoards = await getBoards(db);
                             const updatedHtml = renderToString(LandingPage(updatedBoards));
 
                             await stream.writeSSE(ssePatch("#landingPage", updatedHtml));
-
                         }
                     )
 

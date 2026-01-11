@@ -167,7 +167,7 @@ export const createCardCommandHandler = async (
     await eventSaver.saveEvents(
         eventsToSave,
         model.latestEventPosition,
-        [...(events.map(value => value.event.data.scope ?? []))],
+        events,
         deepMerge(query, cardPositionQuery),
     );
 

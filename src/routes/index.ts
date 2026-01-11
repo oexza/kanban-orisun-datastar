@@ -18,7 +18,7 @@ import {createCardRoute} from "~/slices/create_card";
 import {updateCardRoute} from "~/slices/update_card";
 import {deleteCardRoute} from "~/slices/delete_card";
 import {addCommentRoute} from "~/slices/add_comment";
-import {updateCardPositionRoute} from "~/slices/move_card";
+import {moveCardRoute} from "~/slices/move_card";
 
 const logger = createModuleLogger("routes");
 
@@ -81,6 +81,7 @@ const configureRoutes = (
             return new Response(file, {
                 headers: {
                     "Content-Type": contentTypes[ext || ""] || "application/octet-stream",
+                    "Cache-Control": "public, max-age=31536000",
                 },
             });
         }
@@ -133,7 +134,7 @@ const configureRoutes = (
     updateCardRoute(app, orisunEventSaver, orisunEventRetriever)
     deleteCardRoute(app, orisunEventSaver, orisunEventRetriever)
     addCommentRoute(app, orisunEventSaver, orisunEventRetriever)
-    updateCardPositionRoute(app, orisunEventSaver, orisunEventRetriever)
+    moveCardRoute(app, orisunEventSaver, orisunEventRetriever)
 
     return app
 }
