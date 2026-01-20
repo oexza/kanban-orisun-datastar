@@ -3,10 +3,10 @@ import type { BoardSummary } from "~/db/api";
 
 export function LandingPage(boards: BoardSummary[]) {
   return <div id="landingPage" style="display: contents">
-    <div class="min-h-screen bg-base-200">
+    <div class="min-h-screen">
       <main
           id="index"
-          class="w-full max-w-4xl mx-auto p-8 space-y-10 rounded-[2.5rem] bg-base-100 dark:bg-base-200 shadow-xl"
+          class="w-full max-w-4xl mx-auto p-8 space-y-10"
       >
         <header class="text-center space-y-3">
           <p class="text-sm uppercase tracking-wide text-secondary">
@@ -45,7 +45,7 @@ function BoardsList({ boards }: { boards: BoardSummary[] }) {
   return (
     <section id="boards-list" class="grid gap-8 md:grid-cols-2">
       {boards.length === 0 ? (
-        <div class="card bg-base-200 dark:bg-base-300 shadow-xl">
+        <div class="">
           <div class="card-body items-center text-center">
             <h2 class="card-title text-secondary">No boards yet</h2>
             <p class="text-base-content/60">

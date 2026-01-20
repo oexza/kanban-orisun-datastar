@@ -40,9 +40,9 @@ export function Board({
     tags: TagItem[];
 }) {
     return (
-        <div id="board-app" class="min-h-screen bg-base-200">
+        <div id="board-app" class="min-h-screen">
             <div class="min-h-screen bg-base-300 text-base-content p-4 md:p-8">
-                <main class="w-full p-8 space-y-10 rounded-[2.5rem] bg-base-100 dark:bg-base-200 shadow-xl">
+                <main class="w-full p-4 space-y-10">
                     <div class="breadcrumbs text-sm">
                         <ul>
                             <li>

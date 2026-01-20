@@ -4,10 +4,7 @@ import {streamSSE} from "hono/streaming";
 import {CookieStore, Session, sessionMiddleware} from "hono-sessions";
 import {compression} from "~/lib/compression";
 import {createBoardRoute} from "~/slices/create_board";
-import {
-    OrisunEventRetriever,
-    OrisunEventSaver,
-} from "~/event-sourcing-utils/orisun-event-sourcing";
+import {OrisunEventRetriever, OrisunEventSaver,} from "~/event-sourcing-utils/orisun-event-sourcing";
 import {createBoardsRoute} from "~/slices/boards_readmodel/boards_route";
 import {NodePgDatabase} from "drizzle-orm/node-postgres";
 import {createModuleLogger} from "~/utils/logger";
@@ -55,9 +52,7 @@ const configureRoutes = (
             return next();
         }
 
-        const response = await session(c, next);
-
-        return response;
+        return await session(c, next);
     });
 
     app.get("/static/*", async (c) => {

@@ -1,5 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "hono/jsx/jsx-runtime";
-export function BasePage({ title, children, }) {
-    const isDev = process.env.BUN_ENV !== "production";
-    return (_jsxs("html", { lang: "en", children: [_jsxs("head", { children: [_jsx("meta", { charset: "UTF-8" }), _jsx("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" }), _jsx("link", { href: "/static/style.css", rel: "stylesheet" }), _jsx("link", { href: "https://cdn.jsdelivr.net/npm/daisyui@5", type: "text/css", rel: "stylesheet", media: "print", onload: "this.media='all'; this.onload=null;" }), _jsx("link", { href: "https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css", rel: "stylesheet", media: "print", onload: "this.media='all'; this.onload=null;" }), _jsx("link", { href: "/static/favicon.png", rel: "icon", type: "image/png" }), _jsx("title", { children: title }), _jsx("script", { type: "module", src: "/static/datastar.js" })] }), _jsxs("body", { children: [children, isDev && (_jsx("div", { id: "hotreload", "data-init": "@get('/hotreload', {retryMaxCount: 1000, retryInterval: 20, retryMaxWaitMs: 200})" }))] })] }));
-}

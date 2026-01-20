@@ -42,7 +42,7 @@ function createBrotliCompressTransformStream(): TransformStream<
       brotliCompress = zlib.createBrotliCompress({
         params: {
           [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_TEXT,
-          [zlib.constants.BROTLI_PARAM_QUALITY]: 4,
+          [zlib.constants.BROTLI_PARAM_QUALITY]: 6,
           [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
           [zlib.constants.BROTLI_PARAM_LGWIN]: 22, // Window size (default is 22)
           // Enable flushing - critical for streaming compression
